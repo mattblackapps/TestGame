@@ -8,7 +8,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
@@ -28,7 +27,9 @@ public class Play extends GameState {
 
 	private OrthographicCamera b2dCam;
 
-	public static Logger logger = new Logger("DevInfoYo", Logger.INFO);
+	private Body playerBody;
+
+	public static Logger logger = new Logger("Dev", Logger.INFO);
 
 	public Play(GameStateManager gsm) {
 		super(gsm);
@@ -61,32 +62,19 @@ public class Play extends GameState {
 		FixtureDef fdef = new FixtureDef();
 		fdef.shape = shape;
 		fdef.filter.categoryBits = B2DVars.BIT_GROUND;
-		fdef.filter.maskBits = B2DVars.BIT_BOX | B2DVars.BIT_BALL;
+		fdef.filter.maskBits = B2DVars.BIT_PLAYER;
 		body.createFixture(fdef).setUserData("ground");
 
-		// create falling box
+		// create player
 		bdef.position.set( centerX / PPM, (centerY + 200) / PPM);
 		bdef.type = BodyDef.BodyType.DynamicBody;
 		body = world.createBody(bdef);
 
 		shape.setAsBox(50 / PPM, 50 / PPM);
 		fdef.shape = shape;
-		fdef.filter.categoryBits = B2DVars.BIT_BOX;
+		fdef.filter.categoryBits = B2DVars.BIT_PLAYER;
 		fdef.filter.maskBits = B2DVars.BIT_GROUND;
 		body.createFixture(fdef).setUserData("box");
-
-		// create circle
-		bdef.position.set( (centerX - 20) / PPM, (centerY + 220) / PPM );
-		body = world.createBody(bdef);
-
-
-		CircleShape cshape = new CircleShape();
-		cshape.setRadius(30 / PPM);
-		fdef.shape = cshape;
-		fdef.restitution = 0.2f;
-		fdef.filter.categoryBits = B2DVars.BIT_BALL;
-		fdef.filter.maskBits = B2DVars.BIT_GROUND;
-		body.createFixture(fdef).setUserData("ball");
 	}
 
 	@Override
